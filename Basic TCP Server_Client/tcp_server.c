@@ -14,7 +14,7 @@
 #define SERVER_TCP_PORT 3000
 #define BUFLEN		256	        // buffer length 
 
-int forks(int);
+int echo(int);
 void reaper(int);
 
 int main(int argc, char **argv)
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 	  switch (fork()){
 	  case 0:		/* child */
 		(void) close(sd);
-		exit(forks(new_sd));
+		exit(echo(new_sd));
 	  default:		/* parent */
 		(void) close(new_sd);
 		break;
@@ -75,8 +75,8 @@ int main(int argc, char **argv)
 	}
 }
 
-//	Fork
-int forks(int sd)
+// Child Process Echo
+int echo(int sd)
 {
 	char	buf[BUFLEN];
 	int 	n, bytes_to_read;
