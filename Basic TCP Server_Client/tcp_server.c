@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 	}
 }
 
-// Child Process Echo
+// Child Process Fork Echo
 int echo(int sd)
 {
 	char	buf[BUFLEN];
@@ -84,6 +84,7 @@ int echo(int sd)
 
 	n=read(sd,filename,BUFLEN);
 	filename[n]='\0';
+	//Check file availability
 	if (access(filename,F_OK)!=-1) {
 	  	printf("File access successful\n");
 		FILE *fp = fopen(filename,"rb");
@@ -91,12 +92,12 @@ int echo(int sd)
 	  			{printf ("Cannot open file\n");
 	    			return (0);}
 	 	int fileread = fread(buf,1,BUFLEN,fp);
-	 	printf("Bytes in file = %d \n", fileread);
+	 	//printf("Bytes in file = %d \n", fileread); //Debugging
 	 	printf("Sending file now\n");
 	 	write(sd, buf, fileread);
 		}
 	else {
-	  	fprintf(stderr, "Access failed\n");
+	  	fprintf(stderr, "File access failed\n");
 	  	strcpy(filename,"FAILURE");
 	  	write(sd,filename,strlen(filename));
 		}
