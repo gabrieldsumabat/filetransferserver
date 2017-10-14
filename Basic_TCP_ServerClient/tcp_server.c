@@ -14,7 +14,7 @@
 #define SERVER_TCP_PORT 3000
 #define BUFLEN		256	        // buffer length 
 
-int forks(int);
+int echo(int);
 void reaper(int);
 
 int main(int argc, char **argv)
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 	  switch (fork()){
 	  case 0:		/* child */
 		(void) close(sd);
-		exit(forks(new_sd));
+		exit(echo(new_sd));
 	  default:		/* parent */
 		(void) close(new_sd);
 		break;
@@ -75,8 +75,8 @@ int main(int argc, char **argv)
 	}
 }
 
-//	Fork
-int forks(int sd)
+// Child Process Fork Echo
+int echo(int sd)
 {
 	char	buf[BUFLEN];
 	int 	n, bytes_to_read;
@@ -84,6 +84,7 @@ int forks(int sd)
 
 	n=read(sd,filename,BUFLEN);
 	filename[n]='\0';
+	//Check file availability
 	if (access(filename,F_OK)!=-1) {
 	  	printf("File access successful\n");
 		FILE *fp = fopen(filename,"rb");
@@ -91,12 +92,12 @@ int forks(int sd)
 	  			{printf ("Cannot open file\n");
 	    			return (0);}
 	 	int fileread = fread(buf,1,BUFLEN,fp);
-	 	printf("Bytes in file = %d \n", fileread);
+	 	//printf("Bytes in file = %d \n", fileread); //Debugging
 	 	printf("Sending file now\n");
 	 	write(sd, buf, fileread);
 		}
 	else {
-	  	fprintf(stderr, "Access failed\n");
+	  	fprintf(stderr, "File access failed\n");
 	  	strcpy(filename,"FAILURE");
 	  	write(sd,filename,strlen(filename));
 		}
